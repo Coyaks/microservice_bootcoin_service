@@ -8,17 +8,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 
-@Document(collection = "wallets")
+@Document(collection = "bootcoin_wallets")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Wallet {
+public class BootCoinWallet {
     @Id
     private String id;
     private String documentNumber; // DNI, CEX, Pasaporte
-    private String phoneNumber; // Número de celular (clave primaria)
+    private String phoneNumber;
     private String email;
     private String imei;
-    private BigDecimal balance = BigDecimal.ZERO; // Saldo inicial en 0
-    private String associatedCardNumber; // Tarjeta de débito asociada (opcional)
+    private BigDecimal balance = BigDecimal.ZERO;
 }

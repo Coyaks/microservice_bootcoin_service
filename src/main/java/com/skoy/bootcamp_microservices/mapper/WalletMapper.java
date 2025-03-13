@@ -1,12 +1,12 @@
 package com.skoy.bootcamp_microservices.mapper;
 
 import com.skoy.bootcamp_microservices.dto.CardDTO;
-import com.skoy.bootcamp_microservices.model.Wallet;
+import com.skoy.bootcamp_microservices.model.BootCoinWallet;
 
 public class WalletMapper {
 
-    public static Wallet toEntity(CardDTO dto) {
-        Wallet item = new Wallet();
+    public static BootCoinWallet toEntity(CardDTO dto) {
+        BootCoinWallet item = new BootCoinWallet();
         item.setId(dto.getId());
         /*item.setBankAccountId(dto.getBankAccountId());
         item.setMainBankAccountId(dto.getMainBankAccountId());
@@ -19,7 +19,7 @@ public class WalletMapper {
         return item;
     }
 
-    public static CardDTO toDto(Wallet item) {
+    public static CardDTO toDto(BootCoinWallet item) {
         CardDTO dto = new CardDTO();
         dto.setId(item.getId());
         /*dto.setBankAccountId(item.getBankAccountId());

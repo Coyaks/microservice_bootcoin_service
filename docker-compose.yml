@@ -3,10 +3,10 @@ version: "3.8"
 services:
   mongo:
     image: mongo:6.0
-    container_name: mongo_wallet_db
+    container_name: mongo_bootcoin_db
     restart: always
     ports:
-      - "27007:27017"
+      - "27008:27017"
     volumes:
       - mongo_data:/data/db
     environment:

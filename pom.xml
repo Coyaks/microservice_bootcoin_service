@@ -30,7 +30,7 @@
 		<java.version>17</java.version>
 
 		<sonar.host.url>http://localhost:9000</sonar.host.url> <!-- Cambia según tu servidor -->
-		<sonar.projectKey>wallet-service</sonar.projectKey>
+		<sonar.projectKey>bootcoin-service</sonar.projectKey>
 		<sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 		<sonar.login>sqa_87bfdce1ff0c124fbe85699d54274f202a49b123</sonar.login>
 	</properties>

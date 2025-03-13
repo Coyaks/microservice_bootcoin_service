@@ -1,11 +1,11 @@
 server:
-  port: 9007
+  port: 9008
 spring:
   application:
-    name: wallet-service
+    name: bootcoin-service
   data:
     mongodb:
-      uri: mongodb://admin:password@localhost:27007/microservice_wallet_service?authSource=admin
+      uri: mongodb://admin:password@localhost:27007/microservice_bootcoin_service?authSource=admin
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 
