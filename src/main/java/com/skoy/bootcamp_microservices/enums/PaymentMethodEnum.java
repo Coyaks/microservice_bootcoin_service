@@ -1,12 +1,12 @@
 package com.skoy.bootcamp_microservices.enums;
 
-public enum CardTypeEnum {
-    DEBIT("Debito"),
-    CREDIT("Credito");
+public enum PaymentMethodEnum {
+    YANKI("Yanki"),
+    TRANSFER("Transferencia"),;
 
     private final String name;
 
-    CardTypeEnum(String name) {
+    PaymentMethodEnum(String name) {
         this.name = name;
     }
     public String getName() {

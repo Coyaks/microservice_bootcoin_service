@@ -6,4 +6,5 @@ import reactor.core.publisher.Mono;
 
 public interface IBootCoinTransactionRepository extends ReactiveMongoRepository<BootCoinTransaction, String> {
     Mono<BootCoinTransaction> findById(String id);
+    Mono<BootCoinTransaction> findByTransactionNumber(String transactionNumber);
 }

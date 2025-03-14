@@ -1,17 +1,17 @@
 package com.skoy.bootcamp_microservices.enums;
 
-public enum CardStatusEnum {
-    ACTIVE("Activo"),
-    BLOCKED("Bloqueado"),
-    EXPIRED("Expirado"),
-    DEBT("Deuda"),;
+public enum TransactionStatusEnum {
+    PENDING("Pendiente"),
+    COMPLETED("Completado"),
+    CANCELLED("Cancelado");
 
     private final String name;
 
-    CardStatusEnum(String name) {
+    TransactionStatusEnum(String name) {
         this.name = name;
     }
     public String getName() {
         return name;
     }
+
 }

@@ -18,6 +18,5 @@ public class BootCoinWallet {
     private String documentNumber; // DNI, CEX, Pasaporte
     private String phoneNumber;
     private String email;
-    private String imei;
     private BigDecimal balance = BigDecimal.ZERO;
 }

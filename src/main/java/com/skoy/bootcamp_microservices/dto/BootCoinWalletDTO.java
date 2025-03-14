@@ -4,16 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerDTO {
+public class BootCoinWalletDTO {
     private String id;
-    private String customerType;
-    private String name;
-    private String surname;
-    private String documentType;
-    private String documentNumber;
+    private String documentNumber; // DNI, CEX, Pasaporte
+    private String phoneNumber;
     private String email;
-    private String phone;
+    private BigDecimal balance = BigDecimal.ZERO;
 }

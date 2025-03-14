@@ -1,11 +1,24 @@
 server:
   port: 9008
+
+application:
+  security:
+    jwt:
+      secret-key: 3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b
+      expiration: 86400000 # 1 day
+      refresh-token:
+        expiration: 2592000000 # 30 days
+
 spring:
   application:
     name: bootcoin-service
   data:
     mongodb:
       uri: mongodb://admin:password@localhost:27007/microservice_bootcoin_service?authSource=admin
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 10000
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 

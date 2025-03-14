@@ -2,13 +2,12 @@ package com.skoy.bootcamp_microservices.controller;
 
 import com.skoy.bootcamp_microservices.model.BootCoinTransaction;
 import com.skoy.bootcamp_microservices.model.BootCoinWallet;
-import com.skoy.bootcamp_microservices.model.request.AssociateCardRequest;
-import com.skoy.bootcamp_microservices.model.request.TransferRequest;
 import com.skoy.bootcamp_microservices.service.IBootCoinService;
+import com.skoy.bootcamp_microservices.utils.ApiResponse;
+import com.skoy.bootcamp_microservices.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -24,10 +23,46 @@ public class BootCoinController {
     @Autowired
     private IBootCoinService bootCoinService;
 
-    @PostMapping("/create-wallet")
+    @GetMapping
+    public Flux<BootCoinWallet> findAll() {
+        return bootCoinService.findAll();
+    }
+
+    @GetMapping("/transactions")
+    public Flux<BootCoinTransaction> findAllTransactions() {
+        return bootCoinService.findAllTransactions();
+    }
+
+    @PostMapping
     public Mono<ResponseEntity<BootCoinWallet>> createWallet(@RequestBody BootCoinWallet wallet) {
         return bootCoinService.createWallet(wallet)
                 .map(ResponseEntity::ok);
+    }
+
+    @DeleteMapping("/{id}")
+    public Mono<ApiResponse<Void>> delete(@PathVariable String id) {
+        logger.info("Deleting item with ID: {}", id);
+        return bootCoinService.findById(id)
+                .flatMap(existingCustomer -> bootCoinService.delete(id)
+                        .then(Mono.just(new ApiResponse<Void>("Eliminado correctamente", null, Constants.STATUS_OK))))
+                .switchIfEmpty(Mono.just(new ApiResponse<Void>("ID no encontrado", null, Constants.STATUS_E404)))
+                .onErrorResume(e -> {
+                    logger.error("Error deleting item with ID: {}", id, e);
+                    return Mono.just(new ApiResponse<Void>("Error al eliminar", null, Constants.STATUS_E500));
+                });
+    }
+
+    @DeleteMapping("/transactions/{id}")
+    public Mono<ApiResponse<Void>> deleteTransaction(@PathVariable String id) {
+        logger.info("Deleting item with ID: {}", id);
+        return bootCoinService.findByIdTransaction(id)
+                .flatMap(existingCustomer -> bootCoinService.deleteTransaction(id)
+                        .then(Mono.just(new ApiResponse<Void>("Eliminado correctamente", null, Constants.STATUS_OK))))
+                .switchIfEmpty(Mono.just(new ApiResponse<Void>("ID no encontrado", null, Constants.STATUS_E404)))
+                .onErrorResume(e -> {
+                    logger.error("Error deleting item with ID: {}", id, e);
+                    return Mono.just(new ApiResponse<Void>("Error al eliminar", null, Constants.STATUS_E500));
+                });
     }
 
     @GetMapping("/wallet/{phoneNumber}")
@@ -43,9 +78,16 @@ public class BootCoinController {
                 .map(ResponseEntity::ok);
     }
 
-    @PutMapping("/complete-transaction/{transactionId}")
-    public Mono<ResponseEntity<BootCoinTransaction>> completeTransaction(@PathVariable String transactionId) {
-        return bootCoinService.completeTransaction(transactionId)
+    @PutMapping("/accept-purchase/{transactionId}")
+    public Mono<ResponseEntity<BootCoinTransaction>> acceptPurchaseRequest(@PathVariable String transactionId, @RequestParam String sellerPhoneNumber) {
+        return bootCoinService.acceptPurchaseRequest(transactionId, sellerPhoneNumber)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/validate-and-process/{transactionNumber}")
+    public Mono<ResponseEntity<BootCoinTransaction>> validateAndProcessPayment(@PathVariable String transactionNumber) {
+        return bootCoinService.validateAndProcessPayment(transactionNumber)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }

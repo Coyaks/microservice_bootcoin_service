@@ -8,9 +8,19 @@ import reactor.core.publisher.Mono;
 
 public interface IBootCoinService {
 
+    Flux<BootCoinWallet> findAll();
+    Mono<BootCoinWallet> findByPhoneNumber(String phoneNumber);
+    Flux<BootCoinTransaction> findAllTransactions();
+    Mono<Void> delete(String id);
+    Mono<Void> deleteTransaction(String id);
+    Mono<BootCoinWallet> findById(String id);
+    Mono<BootCoinTransaction> findByIdTransaction(String id);
+
     Mono<BootCoinWallet> createWallet(BootCoinWallet bootCoinWallet);
     Mono<BootCoinWallet> getWalletByPhoneNumber(String phoneNumber);
     Mono<BootCoinTransaction> requestPurchase(BootCoinTransaction transaction);
-    Mono<BootCoinTransaction> completeTransaction(String transactionId);
+
+    Mono<BootCoinTransaction> acceptPurchaseRequest(String transactionId, String sellerPhoneNumber);
+    Mono<BootCoinTransaction> validateAndProcessPayment(String transactionNumber);
 
 }

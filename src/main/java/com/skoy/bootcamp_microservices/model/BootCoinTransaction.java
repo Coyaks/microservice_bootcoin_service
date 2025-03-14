@@ -1,5 +1,7 @@
 package com.skoy.bootcamp_microservices.model;
 
+import com.skoy.bootcamp_microservices.enums.PaymentMethodEnum;
+import com.skoy.bootcamp_microservices.enums.TransactionStatusEnum;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -12,6 +14,7 @@ public class BootCoinTransaction {
     private String buyerPhoneNumber;
     private String sellerPhoneNumber;
     private Double amount;
-    private String paymentMethod; // "Yanki" o "Transferencia"
-    private String transactionStatus; // "Pendiente", "Completado", "Cancelado"
+    private PaymentMethodEnum paymentMethod;
+    private TransactionStatusEnum transactionStatus;
+    private String transactionNumber;
 }
