@@ -67,7 +67,7 @@ public class BootCoinController {
 
     @GetMapping("/wallet/{phoneNumber}")
     public Mono<ResponseEntity<BootCoinWallet>> getWallet(@PathVariable String phoneNumber) {
-        return bootCoinService.getWalletByPhoneNumber(phoneNumber)
+        return bootCoinService.findByPhoneNumber(phoneNumber)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }

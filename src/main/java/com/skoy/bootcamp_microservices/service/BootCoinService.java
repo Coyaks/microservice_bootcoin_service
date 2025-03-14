@@ -6,6 +6,7 @@ import com.skoy.bootcamp_microservices.model.BootCoinWallet;
 import com.skoy.bootcamp_microservices.model.request.TransferRequest;
 import com.skoy.bootcamp_microservices.repository.IBootCoinRepository;
 import com.skoy.bootcamp_microservices.repository.IBootCoinTransactionRepository;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.UUID;
 
 @Service
@@ -40,9 +43,25 @@ public class BootCoinService implements IBootCoinService {
     private static final String WALLET_CACHE_PREFIX = "wallet:";
 
 
+    @CircuitBreaker(name = "bootcoinService", fallbackMethod = "fallbackFindAll")
+    @Override
+    public Flux<BootCoinWallet> findAll() {
+        return bootCoinRepository.findAll();
+    }
+
+    public Flux<BootCoinWallet> fallbackFindAll(Throwable throwable) {
+        return Flux.just(new BootCoinWallet("fallback-wallet","Fallback user", "999999999", "", BigDecimal.valueOf(0.0)));
+    }
+
+
+    @CircuitBreaker(name = "bootcoinService", fallbackMethod = "fallbackCreateWallet")
     @Override
     public Mono<BootCoinWallet> createWallet(BootCoinWallet bootCoinWallet) {
         return bootCoinRepository.save(bootCoinWallet);
+    }
+
+    public Mono<BootCoinWallet> fallbackCreateWallet(BootCoinWallet wallet, Throwable throwable) {
+        return Mono.error(new RuntimeException("Servicio temporalmente no disponible"));
     }
 
     /*@Override
@@ -50,24 +69,15 @@ public class BootCoinService implements IBootCoinService {
         return bootCoinRepository.findByPhoneNumber(phoneNumber);
     }*/
 
-
-   /* @Override
-    public Mono<BootCoinWallet> getWalletByPhoneNumber(String phoneNumber) {
-        String cacheKey = WALLET_CACHE_PREFIX + phoneNumber;
-        return redisTemplate.opsForValue().get(cacheKey)
-                .switchIfEmpty(bootCoinRepository.findByPhoneNumber(phoneNumber)
-                        .flatMap(wallet -> redisTemplate.opsForValue().set(cacheKey, wallet).thenReturn(wallet)));
-    }*/
-
-
     @Override
-    public Mono<BootCoinWallet> getWalletByPhoneNumber(String phoneNumber) {
+    public Mono<BootCoinWallet> findByPhoneNumber(String phoneNumber) {
         ReactiveValueOperations<String, BootCoinWallet> ops = redisTemplate.opsForValue();
-        String cacheKey = "wallet:" + phoneNumber;
+        String cacheKey = WALLET_CACHE_PREFIX + phoneNumber;
+        Duration expiration = Duration.ofHours(1); // Configura la expiración a 1 hora
 
         return ops.get(cacheKey)
                 .switchIfEmpty(bootCoinRepository.findByPhoneNumber(phoneNumber)
-                        .flatMap(wallet -> ops.set(cacheKey, wallet).thenReturn(wallet))
+                        .flatMap(wallet -> ops.set(cacheKey, wallet, expiration).thenReturn(wallet))
                 );
     }
 
@@ -84,16 +94,6 @@ public class BootCoinService implements IBootCoinService {
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Números de teléfono no encontrados")));
     }
 
-
-    @Override
-    public Flux<BootCoinWallet> findAll() {
-        return bootCoinRepository.findAll();
-    }
-
-    @Override
-    public Mono<BootCoinWallet> findByPhoneNumber(String phoneNumber) {
-        return bootCoinRepository.findByPhoneNumber(phoneNumber);
-    }
 
     @Override
     public Flux<BootCoinTransaction> findAllTransactions() {
